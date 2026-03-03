@@ -34,3 +34,16 @@ https://data.gov.ua/dataset/0ffd8b75-0628-48cc-952a-9302f9799ec0/resource/b1bcb4
 - `data_quality_analysis` — перевірка якості та підготовка даних
 - `data_research` — проведення аналітичних розрахунків
 - `visualization` — побудова графіків і візуалізацій
+
+---
+
+## Запуск модуля завантаження даних
+
+Для завантаження та первинного зчитування даних реалізовано CLI-команду `data-load`.
+
+Приклад запуску:
+
+```bash
+PYTHONPATH=src uv run python -m oda_analytics data-load \
+  --csv data/raw/<file_name>.csv \
+  --nrows 100000
