@@ -44,6 +44,18 @@ https://data.gov.ua/dataset/0ffd8b75-0628-48cc-952a-9302f9799ec0/resource/b1bcb4
 Приклад запуску:
 
 ```bash
-PYTHONPATH=src uv run python -m oda_analytics data-load \
+PYTHONPATH=src uv run python -m analytics data-load \
   --csv data/raw/<file_name>.csv \
   --nrows 100000
+```
+
+## Запуск модуля аналізу даних
+
+Для аналізу даних та проведення кластеризації реалізовано CLI-команду `data-research`.
+
+Приклад запуску:
+
+```bash
+ PYTHONPATH=src uv run python -m analytics data-research \
+  --input data/raw/<file_name>.parquet
+```
