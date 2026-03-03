@@ -15,6 +15,10 @@ def run(args: argparse.Namespace) -> None:
         df = pd.read_csv(inp, sep=";", low_memory=False)
 
     print(f"Shape: {df.shape}")
+
+    print("\nBasic statistics:")
+    print(df.describe(include="all"))
+
     print("\nMissing values (top 20):")
     print(df.isna().sum().sort_values(ascending=False).head(20))
 
