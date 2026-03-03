@@ -44,9 +44,22 @@ https://data.gov.ua/dataset/0ffd8b75-0628-48cc-952a-9302f9799ec0/resource/b1bcb4
 Приклад запуску:
 
 ```bash
-PYTHONPATH=src uv run python -m analytics data-load \
+PYTHONPATH=src uv run python -m oda_analytics data-load \
   --csv data/raw/<file_name>.csv \
   --nrows 100000
+```
+
+## Запуск модуля перевірки якості даних
+
+Для виконання базової перевірки якості даних реалізовано CLI-команду `data-quality`.
+
+Модуль здійснює аналіз пропущених значень, пошук дублікатів та базову перевірку числових показників (діапазони значень, мінімум/максимум).
+
+Приклад запуску:
+
+```bash
+PYTHONPATH=src uv run python -m analytics data-quality \
+  --input data/processed/vehicles_2022.parquet
 ```
 
 ## Запуск модуля аналізу даних
