@@ -61,3 +61,14 @@ PYTHONPATH=src uv run python -m oda_analytics data-load \
 PYTHONPATH=src uv run python -m analytics data-quality \
   --input data/processed/vehicles_2022.parquet
 ```
+
+## Запуск модуля аналізу даних
+
+Для аналізу даних та проведення кластеризації реалізовано CLI-команду `data-research`.
+
+Приклад запуску:
+
+```bash
+ PYTHONPATH=src uv run python -m analytics data-research \
+  --input data/raw/<file_name>.parquet
+```
