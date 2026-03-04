@@ -72,3 +72,14 @@ PYTHONPATH=src uv run python -m analytics data-quality \
  PYTHONPATH=src uv run python -m analytics data-research \
   --input data/raw/<file_name>.parquet
 ```
+
+## Запуск модуля візуалізації даних
+
+Для візуалізації даних реалізовано CLI-команду `data-visualize`.
+
+Приклад запуску:
+
+```bash
+ PYTHONPATH=src uv run python -m analytics data-research \
+  --input data/raw/<file_name>.parquet
+```
