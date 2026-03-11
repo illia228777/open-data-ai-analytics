@@ -44,7 +44,7 @@ https://data.gov.ua/dataset/0ffd8b75-0628-48cc-952a-9302f9799ec0/resource/b1bcb4
 Приклад запуску:
 
 ```bash
-PYTHONPATH=src uv run python -m oda_analytics data-load \
+uv run python -m oda_analytics data-load \
   --csv data/raw/<file_name>.csv \
   --nrows 100000
 ```
@@ -58,7 +58,7 @@ PYTHONPATH=src uv run python -m oda_analytics data-load \
 Приклад запуску:
 
 ```bash
-PYTHONPATH=src uv run python -m analytics data-quality \
+uv run python -m analytics data-quality \
   --input data/processed/vehicles_2022.parquet
 ```
 
@@ -69,7 +69,7 @@ PYTHONPATH=src uv run python -m analytics data-quality \
 Приклад запуску:
 
 ```bash
- PYTHONPATH=src uv run python -m analytics data-research \
+uv run python -m analytics data-research \
   --input data/raw/<file_name>.parquet
 ```
 
@@ -80,6 +80,6 @@ PYTHONPATH=src uv run python -m analytics data-quality \
 Приклад запуску:
 
 ```bash
- PYTHONPATH=src uv run python -m analytics data-visualize \
+uv run python -m analytics data-visualize \
   --input data/raw/<file_name>.parquet
 ```

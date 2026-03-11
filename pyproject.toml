@@ -12,3 +12,6 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "seaborn>=0.13.2",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/analytics", "src/utils"]
