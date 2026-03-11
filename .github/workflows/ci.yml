@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
         run: pip install uv
@@ -38,7 +38,7 @@ jobs:
         run: uv sync
 
       - name: Cache dataset
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: dataset-cache
         with:
           path: ./data
@@ -46,7 +46,7 @@ jobs:
 
       - name: Download dataset
         if: steps.dataset-cache.outputs.cache-hit != 'true'
-        run: uv run python download_data.py --output ./data/dataset.parquet
+        run: uv run python -m utils download
 
       - name: Run module
         run: |
