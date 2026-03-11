@@ -66,7 +66,6 @@ jobs:
           path: ./data
           key: dataset-v1
       - name: Run ${{ matrix.module.name }}
-
         if: >-
           github.event.inputs.module == 'all' ||
           github.event.inputs.module == '' ||
@@ -74,3 +73,46 @@ jobs:
           
 
         run: uv run python -m analytics ${{ matrix.module.command }} --input ./data/dataset.parquet
+
+      - name: Upload figures
+        if: matrix.module.name == 'visualization'
+        uses: actions/upload-artifact@v5
+        with:
+          name: figures
+          path: reports/figures/
+
+  deploy-pages:
+    needs: test-module
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # Copy the committed index.html as the site base
+      - name: Prepare site
+        run: cp pages/index.html ./site/index.html
+
+      # Download plots into site/figures/
+      - name: Download figures
+        uses: actions/download-artifact@v5
+        with:
+          name: figures
+          path: ./site/figures
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
