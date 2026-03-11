@@ -1,7 +1,10 @@
-# .github/workflows/ci-selfhosted.yml
 name: CI (self-hosted)
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       module:
@@ -10,9 +13,9 @@ on:
         default: data_quality
         type: choice
         options:
-          - data_quality
-          - data_research
-          - visualization
+          - data-quality
+          - data-research
+          - data-visualize
 
 jobs:
   test-local:
