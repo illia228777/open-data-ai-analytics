@@ -28,6 +28,9 @@ jobs:
   test-workflow:
     runs-on: ubuntu-latest
 
+    env:
+      PYTHONPATH: src
+
     steps:
       - uses: actions/checkout@v5
 
