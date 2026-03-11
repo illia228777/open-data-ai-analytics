@@ -80,6 +80,6 @@ PYTHONPATH=src uv run python -m analytics data-quality \
 Приклад запуску:
 
 ```bash
- PYTHONPATH=src uv run python -m analytics data-research \
+ PYTHONPATH=src uv run python -m analytics data-visualize \
   --input data/raw/<file_name>.parquet
 ```
