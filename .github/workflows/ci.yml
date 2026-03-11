@@ -55,7 +55,6 @@ jobs:
         run: |
           MODULE="${{ github.event.inputs.module || 'all' }}"
           if [ "$MODULE" = "all" ]; then
-            uv run python -m analytics data-load --input ./data/dataset.parquet
             uv run python -m analytics data-quality-analysis --input ./data/dataset.parquet
             uv run python -m analytics data-research --input ./data/dataset.parquet
             uv run python -m analytics data-visualize --input ./data/dataset.parquet
