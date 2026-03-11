@@ -24,5 +24,9 @@ jobs:
       PYTHONPATH: src
     steps:
       - uses: actions/checkout@v5
-      - name: Run ${{ github.event.inputs.module }}
-        run: uv run python -m analytics ${{ github.event.inputs.module }} --input ./data/dataset.parquet
+      - run: uv sync
+      - name: Run module
+        run: >-
+          uv run python -m analytics
+          ${{ github.event.inputs.module || 'data-quality' }}
+          --input /Users/illiamatsko/My/University/DevOps/Labs/open-data-ai-analytics/data/raw/vehicles_2022.parquet
