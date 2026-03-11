@@ -29,6 +29,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print selected module
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Cache dataset
+        uses: actions/cache@v4
+        id: dataset-cache
+        with:
+          path: ./data
+          key: dataset-v1
+
+      - name: Download dataset
+        if: steps.dataset-cache.outputs.cache-hit != 'true'
+        run: uv run python download_data.py --output ./data/dataset.parquet
+
+      - name: Run module
         run: |
-          echo "Selected module: ${{ github.event.inputs.module }}"
+          MODULE="${{ github.event.inputs.module || 'all' }}"
+          if [ "$MODULE" = "all" ]; then
+            uv run python -m analytics data-load --input ./data/dataset.parquet
+            uv run python -m analytics data-quality-analysis --input ./data/dataset.parquet
+            uv run python -m analytics data-research --input ./data/dataset.parquet
+            uv run python -m analytics data-visualize --input ./data/dataset.parquet
+          else
+            uv run python -m analytics "$MODULE" --input ./data/dataset.parquet
+          fi
