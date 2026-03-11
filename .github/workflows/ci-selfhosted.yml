@@ -1,0 +1,25 @@
+# .github/workflows/ci-selfhosted.yml
+name: CI (self-hosted)
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Which module to test?"
+        required: true
+        default: data_quality
+        type: choice
+        options:
+          - data_quality
+          - data_research
+          - visualization
+
+jobs:
+  test-local:
+    runs-on: self-hosted
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run ${{ github.event.inputs.module }}
+        run: uv run python -m analytics ${{ github.event.inputs.module }} --input ./data/dataset.parquet

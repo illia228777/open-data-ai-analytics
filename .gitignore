@@ -26,3 +26,6 @@ data/raw
 
 # Generated reports / figures
 reports/figures/
+
+# Actions runner
+actions-runner
