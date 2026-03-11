@@ -99,7 +99,9 @@ jobs:
 
       # Copy the committed index.html as the site base
       - name: Prepare site
-        run: cp pages/index.html ./site/index.html
+        run: |
+          mkdir -p ./site
+          cp pages/index.html ./site/index.html
 
       # Download plots into site/figures/
       - name: Download figures
