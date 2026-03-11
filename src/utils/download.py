@@ -53,25 +53,12 @@ def download(file_id: str, output_path: Path) -> None:
         sys.exit(1)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Download dataset from Google Drive")
-    parser.add_argument(
-        "--output", "-o",
-        type=Path,
-        default=Path("./data/dataset.parquet"),
-        help="Output file path (default: ./data/dataset.parquet)",
-    )
-    parser.add_argument(
-        "--file-id",
-        type=str,
-        default='1w15cItMy_FuM_J-7qHr2j2zirANyczQr',
-        help="Google Drive file ID (overrides the hardcoded FILE_ID)",
-    )
-    args = parser.parse_args()
-
+def run(args: argparse.Namespace):
     download(args.file_id, args.output)
 
-
-if __name__ == "__main__":
-    main()
+def add_download_subparser(subparsers: argparse._SubParsersAction) -> None:
+    p = subparsers.add_parser("download", help="Download dataset from Google Drive")
+    p.add_argument("--file-id", type=str, default='1w15cItMy_FuM_J-7qHr2j2zirANyczQr', help="Google Drive file ID")
+    p.add_argument("--output", "-o", type=Path, default=Path("./data/dataset.parquet"), help="Output file path")
+    p.set_defaults(func=run)
 
