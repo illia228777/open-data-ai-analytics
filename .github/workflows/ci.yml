@@ -24,39 +24,53 @@ on:
           - visualization
 
 jobs:
-  test-workflow:
+  prepare-data:
     runs-on: ubuntu-latest
-
     env:
       PYTHONPATH: src
-
     steps:
       - uses: actions/checkout@v5
-
-      - name: Install uv
-        run: pip install uv
-
-      - name: Sync dependencies
-        run: uv sync
-
-      - name: Cache dataset
-        uses: actions/cache@v5
+      - run: pip install uv
+      - run: uv sync
+      - uses: actions/cache@v5
         id: dataset-cache
         with:
           path: ./data
           key: dataset-v1
-
       - name: Download dataset
         if: steps.dataset-cache.outputs.cache-hit != 'true'
         run: uv run python -m utils download
 
-      - name: Run module
-        run: |
-          MODULE="${{ github.event.inputs.module || 'all' }}"
-          if [ "$MODULE" = "all" ]; then
-            uv run python -m analytics data-quality --input ./data/dataset.parquet
-            uv run python -m analytics data-research --input ./data/dataset.parquet
-            uv run python -m analytics data-visualize --input ./data/dataset.parquet
-          else
-            uv run python -m analytics "$MODULE" --input ./data/dataset.parquet
-          fi
+  test-module:
+    needs: prepare-data
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src
+
+    strategy:
+      matrix:
+        module:
+          - name: data_quality
+            command: data-quality
+          - name: data_research
+            command: data-research
+          - name: visualization
+            command: data-visualize
+
+    steps:
+      - uses: actions/checkout@v5
+      - run: pip install uv
+      - run: uv sync
+      - uses: actions/cache@v5
+        with:
+          path: ./data
+          key: dataset-v1
+      - name: Run ${{ matrix.module.name }}
+
+        if: >-
+          github.event.inputs.module == 'all' ||
+          github.event.inputs.module == '' ||
+          github.event.inputs.module == matrix.module.name
+          
+
+        run: uv run python -m analytics ${{ matrix.module.command }} --input ./data/dataset.parquet

@@ -59,7 +59,7 @@ uv run python -m oda_analytics data-load \
 
 ```bash
 uv run python -m analytics data-quality \
-  --input data/processed/vehicles_2022.parquet
+  --input data/raw/<file_name>.parquet
 ```
 
 ## Запуск модуля аналізу даних
