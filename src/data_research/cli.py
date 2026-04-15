@@ -287,13 +287,16 @@ def analyze_owner_type_differences(df: pd.DataFrame) -> None:
 def run(args: argparse.Namespace) -> None:
     engine = get_engine()
 
+    cols = ["N_REG_NEW", "PERSON", "BODY", "FUEL", "MAKE_YEAR", "CAPACITY", "OWN_WEIGHT", "TOTAL_WEIGHT"]
+    col_list = ", ".join(f'"{c}"' for c in cols)
+
     if args.sample and args.sample > 0:
         query = (
-            f'SELECT * FROM "{args.table}" '
+            f'SELECT {col_list} FROM "{args.table}" '
             f"ORDER BY random() LIMIT {int(args.sample)}"
         )
     else:
-        query = f'SELECT * FROM "{args.table}"'
+        query = f'SELECT {col_list} FROM "{args.table}"'
 
     df = pd.read_sql(query, engine)
     print(f"Loaded {len(df)} rows from '{args.table}'.")

@@ -17,7 +17,10 @@ def run(args: argparse.Namespace) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     engine = get_engine()
-    df = pd.read_sql(f'SELECT * FROM "{args.table}"', engine)
+    df = pd.read_sql(
+        f'SELECT "BRAND", "MAKE_YEAR", "PERSON" FROM "{args.table}"',
+        engine,
+    )
 
     if "BRAND" in df.columns:
         top = df["BRAND"].value_counts().head(10)

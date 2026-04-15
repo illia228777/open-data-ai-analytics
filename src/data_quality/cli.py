@@ -9,7 +9,9 @@ from utils.db import get_engine
 
 def run(args: argparse.Namespace) -> None:
     engine = get_engine()
-    df = pd.read_sql(f'SELECT * FROM "{args.table}"', engine)
+    cols = ["BRAND", "MAKE_YEAR", "PERSON", "CAPACITY", "OWN_WEIGHT", "TOTAL_WEIGHT", "BODY", "FUEL", "N_REG_NEW"]
+    col_list = ", ".join(f'"{c}"' for c in cols)
+    df = pd.read_sql(f'SELECT {col_list} FROM "{args.table}"', engine)
 
     print(f"Shape: {df.shape}")
 
