@@ -63,3 +63,16 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> None:
         help="Enable pandas low_memory (may cause mixed dtype warnings)",
     )
     p.set_defaults(func=run)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="data-load", description="Data load module")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    add_subparser(subparsers)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+    args.func(args)

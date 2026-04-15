@@ -34,3 +34,16 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> None:
     p = subparsers.add_parser("data-quality", help="Run basic data quality checks")
     p.add_argument("--input", required=True, type=Path, help="Path to .parquet or source .csv")
     p.set_defaults(func=run)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="data-quality", description="Data quality module")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    add_subparser(subparsers)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+    args.func(args)

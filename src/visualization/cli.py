@@ -70,3 +70,16 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> None:
         help="Directory to save figures",
     )
     p.set_defaults(func=run)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="data-visualize", description="Visualization module")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    add_subparser(subparsers)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+    args.func(args)

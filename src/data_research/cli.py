@@ -320,3 +320,16 @@ def add_subparser(subparsers: argparse._SubParsersAction) -> None:
     p.add_argument("--input", required=True, type=Path, help="Path to processed dataset (.parquet)")
     p.add_argument("--output", type=Path, help="Directory to save output artifacts")
     p.set_defaults(func=run)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="data-research", description="Data research module")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    add_subparser(subparsers)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+    args.func(args)

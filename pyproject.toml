@@ -14,4 +14,11 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/analytics", "src/utils"]
+packages = [
+    "src/analytics",
+    "src/data_load",
+    "src/data_quality",
+    "src/data_research",
+    "src/visualization",
+    "src/utils",
+]
