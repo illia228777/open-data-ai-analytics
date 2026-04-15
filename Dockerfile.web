@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY src/web/ ./src/web/
 COPY src/utils/ ./src/utils/
-COPY pages/ ./pages/
+COPY pages/ /site/
+RUN mkdir -p /site/figures
 
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1

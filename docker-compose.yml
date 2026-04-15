@@ -72,7 +72,6 @@ services:
       dockerfile: Dockerfile.web
     volumes:
       - figures:/site/figures:ro
-      - ./pages:/site:ro
     ports:
       - "8000:8000"
     networks:
