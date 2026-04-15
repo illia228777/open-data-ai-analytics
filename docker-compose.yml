@@ -1,0 +1,90 @@
+services:
+  db:
+    image: postgres:16
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - analytics_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  data_load:
+    build:
+      context: .
+      dockerfile: Dockerfile.data_load
+    env_file: .env
+    volumes:
+      - ./data/raw:/data/raw:ro
+    networks:
+      - analytics_net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  data_quality:
+    build:
+      context: .
+      dockerfile: Dockerfile.data_quality
+    env_file: .env
+    networks:
+      - analytics_net
+    depends_on:
+      db:
+        condition: service_healthy
+      data_load:
+        condition: service_completed_successfully
+
+  data_research:
+    build:
+      context: .
+      dockerfile: Dockerfile.data_research
+    env_file: .env
+    networks:
+      - analytics_net
+    depends_on:
+      db:
+        condition: service_healthy
+      data_load:
+        condition: service_completed_successfully
+
+  visualization:
+    build:
+      context: .
+      dockerfile: Dockerfile.visualization
+    env_file: .env
+    volumes:
+      - figures:/figures
+    networks:
+      - analytics_net
+    depends_on:
+      db:
+        condition: service_healthy
+      data_load:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    volumes:
+      - figures:/site/figures:ro
+      - ./pages:/site:ro
+    ports:
+      - "8000:8000"
+    networks:
+      - analytics_net
+    depends_on:
+      visualization:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
+  figures:
+
+networks:
+  analytics_net:
+    driver: bridge

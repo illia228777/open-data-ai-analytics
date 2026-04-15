@@ -29,3 +29,6 @@ reports/figures/
 
 # Actions runner
 actions-runner
+
+# Secrets
+.env
