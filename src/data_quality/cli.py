@@ -1,18 +1,15 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import pandas as pd
 
+from utils.db import get_engine
+
 
 def run(args: argparse.Namespace) -> None:
-    inp: Path = args.input
-
-    if inp.suffix.lower() == ".parquet":
-        df = pd.read_parquet(inp)
-    else:
-        df = pd.read_csv(inp, sep=";", low_memory=False)
+    engine = get_engine()
+    df = pd.read_sql(f'SELECT * FROM "{args.table}"', engine)
 
     print(f"Shape: {df.shape}")
 
@@ -32,7 +29,7 @@ def run(args: argparse.Namespace) -> None:
 
 def add_subparser(subparsers: argparse._SubParsersAction) -> None:
     p = subparsers.add_parser("data-quality", help="Run basic data quality checks")
-    p.add_argument("--input", required=True, type=Path, help="Path to .parquet or source .csv")
+    p.add_argument("--table", default="vehicles", help="Source table")
     p.set_defaults(func=run)
 
 

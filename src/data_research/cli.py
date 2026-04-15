@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import pandas as pd
+from utils.db import get_engine
 from scipy.stats import chi2_contingency, mannwhitneyu
 from sklearn.cluster import KMeans
 from sklearn.compose import ColumnTransformer
@@ -285,7 +285,18 @@ def analyze_owner_type_differences(df: pd.DataFrame) -> None:
 
 
 def run(args: argparse.Namespace) -> None:
-    df = pd.read_parquet(args.input)
+    engine = get_engine()
+
+    if args.sample and args.sample > 0:
+        query = (
+            f'SELECT * FROM "{args.table}" '
+            f"ORDER BY random() LIMIT {int(args.sample)}"
+        )
+    else:
+        query = f'SELECT * FROM "{args.table}"'
+
+    df = pd.read_sql(query, engine)
+    print(f"Loaded {len(df)} rows from '{args.table}'.")
 
     df_prepared = preprocess_for_research(df)
 
@@ -300,25 +311,16 @@ def run(args: argparse.Namespace) -> None:
         ].head(10)
     )
 
-    if args.output:
-        args.output.mkdir(parents=True, exist_ok=True)
-        clustered.to_parquet(args.output / "clustered_vehicles.parquet", index=False)
-
-        cluster_summary = (
-            clustered.groupby("cluster")[["CAPACITY", "OWN_WEIGHT", "TOTAL_WEIGHT", "vehicle_age"]]
-            .mean()
-            .round(2)
-            .reset_index()
-        )
-        cluster_summary.to_csv(args.output / "cluster_summary.csv", index=False)
-
-        print(f"\nArtifacts saved to: {args.output}")
-
 
 def add_subparser(subparsers: argparse._SubParsersAction) -> None:
     p = subparsers.add_parser("data-research", help="Perform exploratory data research")
-    p.add_argument("--input", required=True, type=Path, help="Path to processed dataset (.parquet)")
-    p.add_argument("--output", type=Path, help="Directory to save output artifacts")
+    p.add_argument("--table", default="vehicles", help="Source table")
+    p.add_argument(
+        "--sample",
+        type=int,
+        default=150000,
+        help="Random sample size for clustering (0 = full dataset)",
+    )
     p.set_defaults(func=run)
 
 
