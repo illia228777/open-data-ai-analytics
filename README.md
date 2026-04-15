@@ -83,3 +83,53 @@ uv run python -m analytics data-research \
 uv run python -m analytics data-visualize \
   --input data/raw/<file_name>.parquet
 ```
+
+
+---
+
+## Running with Docker
+
+The pipeline runs end-to-end in containers: Postgres as the data store, each module as its own image, orchestrated by Compose.
+
+### Prerequisites
+
+- Docker + Docker Compose
+- A copy of the source CSV at `./data/raw/vehicles_2022.csv`
+
+### Setup
+
+```bash
+cp .env.example .env
+# edit .env if you want a non-default password
+```
+
+### Run the full pipeline
+
+```bash
+docker compose up --build
+```
+
+Order of execution (compose handles this automatically):
+
+1. `db` (Postgres 16) starts and becomes healthy.
+2. `data_load` streams the CSV into Postgres via COPY.
+3. `data_quality`, `data_research`, `visualization` run in parallel, reading from the DB.
+4. `web` serves `pages/index.html` and the figures on http://localhost:8000.
+
+### Stopping
+
+```bash
+docker compose down          # keep DB volume
+docker compose down -v       # also drop DB and figures
+```
+
+### Services
+
+| Service        | Dockerfile                 | Role                                       |
+|----------------|----------------------------|--------------------------------------------|
+| `db`           | `postgres:16` image        | Data store                                 |
+| `data_load`    | `Dockerfile.data_load`     | CSV → Postgres via Polars + psycopg COPY   |
+| `data_quality` | `Dockerfile.data_quality`  | Quality report over `vehicles` table       |
+| `data_research`| `Dockerfile.data_research` | Stats + clustering on a random sample      |
+| `visualization`| `Dockerfile.visualization` | Writes PNGs to the `figures` volume        |
+| `web`          | `Dockerfile.web`           | Static HTTP server for figures + index.html|
