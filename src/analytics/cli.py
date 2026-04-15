@@ -6,6 +6,7 @@ from data_load import add_subparser as add_data_load_subparser
 from data_quality import add_subparser as add_data_quality_subparser
 from data_research import add_subparser as add_data_research_subparser
 from visualization import add_subparser as add_visualization_subparser
+from web import add_subparser as add_web_subparser
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -19,6 +20,7 @@ def build_parser() -> argparse.ArgumentParser:
     add_data_quality_subparser(subparsers)
     add_data_research_subparser(subparsers)
     add_visualization_subparser(subparsers)
+    add_web_subparser(subparsers)
 
     return parser
 

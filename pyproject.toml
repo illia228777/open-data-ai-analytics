@@ -20,5 +20,6 @@ packages = [
     "src/data_quality",
     "src/data_research",
     "src/visualization",
+    "src/web",
     "src/utils",
 ]
