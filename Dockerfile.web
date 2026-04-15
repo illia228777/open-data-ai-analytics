@@ -1,0 +1,14 @@
+FROM python:3.14-slim
+
+WORKDIR /app
+
+COPY src/web/ ./src/web/
+COPY src/utils/ ./src/utils/
+COPY pages/ ./pages/
+
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+CMD ["python", "-m", "web", "web-serve", "--dir", "/site", "--host", "0.0.0.0", "--port", "8000"]
