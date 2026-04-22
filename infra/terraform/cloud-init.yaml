@@ -2,25 +2,16 @@
 package_update: true
 
 packages:
-  - docker.io
-  - docker-compose-v2
   - git
 
-write_files:
-  - path: /home/ubuntu/.env_analytics
-    content: |
-      POSTGRES_DB=analytics
-      POSTGRES_USER=analytics
-      POSTGRES_PASSWORD=changeme
-      POSTGRES_HOST=db
-      POSTGRES_PORT=5432
-
 runcmd:
-  - systemctl start docker
-  - systemctl enable docker
-  - usermod -aG docker ubuntu
+  - curl -sfL https://get.k3s.io | sh -
+  - until k3s kubectl get nodes; do sleep 2; done
+  - k3s kubectl create namespace argocd
+  - k3s kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  - until k3s kubectl -n argocd get pods | grep argocd-server | grep Running; do sleep 5; done
+  - "k3s kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"NodePort\", \"ports\": [{\"port\": 443, \"targetPort\": 8080, \"nodePort\": 30443}]}}'"
   - git clone https://github.com/illia228777/open-data-ai-analytics.git /home/ubuntu/open-data-ai-analytics
-  - cp /home/ubuntu/.env_analytics /home/ubuntu/open-data-ai-analytics/.env
   - chown -R ubuntu:ubuntu /home/ubuntu/open-data-ai-analytics
-  - cd /home/ubuntu/open-data-ai-analytics && docker compose up -d
-  - cd /home/ubuntu/open-data-ai-analytics/monitoring && docker compose -f docker-compose.monitoring.yml up -d
+  - k3s kubectl apply -f /home/ubuntu/open-data-ai-analytics/gitops/app/namespace.yaml
+  - k3s kubectl apply -f /home/ubuntu/open-data-ai-analytics/gitops/argocd/application.yaml
