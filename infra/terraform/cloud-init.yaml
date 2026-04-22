@@ -2,9 +2,14 @@
 package_update: true
 
 packages:
+  - docker.io
+  - docker-compose-v2
   - git
 
 runcmd:
+  - systemctl start docker
+  - systemctl enable docker
+  - usermod -aG docker ubuntu
   - curl -sfL https://get.k3s.io | sh -
   - until k3s kubectl get nodes; do sleep 2; done
   - k3s kubectl create namespace argocd
@@ -15,3 +20,4 @@ runcmd:
   - chown -R ubuntu:ubuntu /home/ubuntu/open-data-ai-analytics
   - k3s kubectl apply -f /home/ubuntu/open-data-ai-analytics/gitops/app/namespace.yaml
   - k3s kubectl apply -f /home/ubuntu/open-data-ai-analytics/gitops/argocd/application.yaml
+  - cd /home/ubuntu/open-data-ai-analytics/monitoring && docker compose -f docker-compose.monitoring.yml up -d
