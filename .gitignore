@@ -31,6 +31,7 @@ reports/figures/
 actions-runner
 
 # Secrets
-.env.terraform/
+.env
+.terraform/
 *.tfstate
 *.tfstate.backup
